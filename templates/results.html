@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white min-h-screen py-12 px-4 font-sans">
+    <div class="max-w-4xl mx-auto space-y-8">
+        
+        <div class="flex items-center justify-between border-b border-slate-700 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">Analysis Complete</h1>
+                <p class="text-slate-400 mt-1">Here is how your resume aligns with current market demands.</p>
+            </div>
+            <a href="/" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-sm font-medium transition-colors">
+                ← Analyze Another
+            </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="col-span-1 bg-slate-800 p-6 rounded-2xl border border-slate-700 flex flex-col items-center justify-center text-center">
+                <h2 class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Estimated ATS Score</h2>
+                <div class="text-6xl font-bold text-indigo-400 mb-2">{{ ats_score }}<span class="text-3xl text-slate-500">/100</span></div>
+                <p class="text-xs text-slate-500">Based on keyword frequency</p>
+            </div>
+
+            <div class="col-span-1 md:col-span-2 bg-slate-800 p-6 rounded-2xl border border-slate-700">
+                <h2 class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-4">Detected Technical Skills</h2>
+                <div class="flex flex-wrap gap-2">
+                    {% if skills %}
+                        {% for skill in skills %}
+                            <span class="px-3 py-1 bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 rounded-full text-sm font-medium capitalize">
+                                {{ skill }}
+                            </span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-slate-500 italic">No exact matches found in our database.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700">
+            <h2 class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-6">Role Alignment (TF-IDF Similarity)</h2>
+            
+            <div class="space-y-6">
+                {% for job in job_matches %}
+                <div>
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="font-medium text-lg">{{ job.role }}</span>
+                        <span class="text-sm font-bold {% if job.match_score > 50 %}text-emerald-400{% elif job.match_score > 20 %}text-amber-400{% else %}text-rose-400{% endif %}">
+                            {{ job.match_score }}% Match
+                        </span>
+                    </div>
+                    <div class="w-full bg-slate-900 rounded-full h-3">
+                        <div class="h-3 rounded-full {% if job.match_score > 50 %}bg-emerald-500{% elif job.match_score > 20 %}bg-amber-500{% else %}bg-rose-500{% endif %}" style="width: {{ job.match_score }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
