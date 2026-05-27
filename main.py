@@ -70,25 +70,28 @@ def home():
 @app.route("/upload", methods=["POST"])
 def upload_resume():
     if "resume" not in request.files: 
-        flash("No file part found.")
+        flash("No file part found.", "error")
         return redirect(url_for("home"))
     
     file = request.files["resume"]
     
     if file.filename == '':
-        flash("No selected file.")
+        flash("No selected file.", "error")
         return redirect(url_for("home"))
         
     if file and allowed_file(file.filename):
         # Pass the file directly into the extractor from memory
         text = clean_text(extract_text_from_pdf(file))
         
+        # --- Trigger the success pop-up message ---
+        flash("Resume analyzed successfully! 🚀", "success")
+        
         return render_template("results.html", 
                                skills=extract_skills(text), 
                                ats_score=calculate_ats_score(text), 
                                job_matches=match_jobs(text))
     
-    flash("Invalid file format. Please upload a PDF.")
+    flash("Invalid file format. Please upload a PDF.", "error")
     return redirect(url_for("home"))
 
 if __name__ == "__main__":
