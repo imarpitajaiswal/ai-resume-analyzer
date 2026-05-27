@@ -1,11 +1,8 @@
 import os
 import re
 import logging
-import time
-from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, flash
 from PyPDF2 import PdfReader
-from werkzeug.utils import secure_filename
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -18,11 +15,8 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-123')
 
 # --- CONFIG ---
-UPLOAD_FOLDER = os.path.join('data', 'resumes')
 ALLOWED_EXTENSIONS = {'pdf'}
-MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB
 
 # --- DATASETS ---
 ATS_KEYWORDS = {"python": 15, "machine learning": 20, "sql": 15, "cloud": 12, "aws": 15}
@@ -37,12 +31,15 @@ SKILLS_DB = {"python", "java", "sql", "aws", "docker", "flask", "react", "machin
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def extract_text_from_pdf(file_path):
+def extract_text_from_pdf(file_stream):
+    """Reads PDF text directly from memory without saving to disk."""
     text = ""
-    with open(file_path, "rb") as file:
-        reader = PdfReader(file)
+    try:
+        reader = PdfReader(file_stream)
         for page in reader.pages:
             text += page.extract_text() or ""
+    except Exception as e:
+        logger.error(f"Error reading PDF: {e}")
     return text.lower()
 
 def clean_text(text):
@@ -72,18 +69,26 @@ def home():
 
 @app.route("/upload", methods=["POST"])
 def upload_resume():
-    if "resume" not in request.files: return redirect(url_for("home"))
+    if "resume" not in request.files: 
+        flash("No file part found.")
+        return redirect(url_for("home"))
+    
     file = request.files["resume"]
-    if file and allowed_file(file.filename):
-        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-        path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
-        file.save(path)
+    
+    if file.filename == '':
+        flash("No selected file.")
+        return redirect(url_for("home"))
         
-        text = clean_text(extract_text_from_pdf(path))
+    if file and allowed_file(file.filename):
+        # Pass the file directly into the extractor from memory
+        text = clean_text(extract_text_from_pdf(file))
+        
         return render_template("results.html", 
                                skills=extract_skills(text), 
                                ats_score=calculate_ats_score(text), 
                                job_matches=match_jobs(text))
+    
+    flash("Invalid file format. Please upload a PDF.")
     return redirect(url_for("home"))
 
 if __name__ == "__main__":
