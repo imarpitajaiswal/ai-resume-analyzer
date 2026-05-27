@@ -1,29 +1,25 @@
-# AI-Resume-Analyzer
+# 📄 AI Resume Analyzer (NLP & Machine Learning)
 
-## 🎯 The Why
-An intelligent recruitment tool that leverages Natural Language Processing (NLP) to bridge the gap between candidates and job descriptions by automating resume screening and ATS scoring.
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Flask](https://img.shields.io/badge/Framework-Flask-black?logo=flask)](https://flask.palletsprojects.com/)
+[![Scikit-Learn](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-F7931E?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
+[![Tailwind CSS](https://img.shields.io/badge/UI-Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 
-## 🚀 Key Features
-* **Automated Parsing**: Extracts text from PDF resumes accurately.
-* **ATS Scoring**: Calculates a keyword-based score to determine resume optimization.
-* **Job Matching**: Uses TF-IDF and Cosine Similarity to find the best role matches.
-* **Skill Extraction**: Identifies technical competencies automatically.
+A lightweight, machine-learning-powered web application that analyzes PDF resumes against target tech roles. 
 
-## 🛠 Tech Stack
-| Category | Technology |
-| :--- | :--- |
-| **Backend** | Flask (Python) |
-| **AI/NLP** | Scikit-Learn (TF-IDF), PyPDF2 |
-| **Data Processing**| Regex, NumPy |
+**Why this architecture?** Instead of relying on expensive, high-latency external LLM APIs, this system leverages native **Natural Language Processing (NLP)** techniques and vector space mathematics to provide immediate, deterministic, and mathematically grounded feedback on a candidate's resume optimization.
 
-## ⚙️ How to Run
-1. **Install requirements**:
-   `pip install flask PyPDF2 scikit-learn`
-2. **Run the application**:
-   `python app.py`
-3. **Access the interface**:
-   Open `http://127.0.0.1:5000` in your browser.
+---
 
-## 🔮 Future Scope
-* **OpenAI API Integration**: Transition from keyword matching to Large Language Model (LLM) based evaluation for better context understanding.
-* **Database Persistence**: Move from a local file system to a PostgreSQL database for historical candidate tracking.
+## ✨ Key Features
+
+* **Zero-Latency Execution:** Runs entirely on local machine learning models with zero dependency on third-party LLMs.
+* **Instant Document Parsing:** Extracts, cleans, and normalizes raw text from complex PDF binaries instantly using RegEx.
+* **Smart ATS Scoring:** Evaluates resume viability utilizing a weighted, domain-specific keyword extraction algorithm.
+* **Precision Role Alignment:** Calculates exact mathematical match percentages against specific job descriptions (e.g., Machine Learning Engineer, Data Analyst, Software Developer).
+
+---
+
+## 🧠 Core ML Pipeline & Architecture
+
+This application utilizes vector space modeling for highly
